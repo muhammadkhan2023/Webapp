@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adapted WebScene</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.27/esri/themes/light/main.css">
+  <script src="https://js.arcgis.com/4.27/"></script>
+  <style>
+    html, body, #viewDiv {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="viewDiv"></div>
+ 
+ <script>
+    require([
+      "esri/WebScene",
+      "esri/views/SceneView",
+      "esri/widgets/Search"
+    ], function(WebScene, SceneView, Search) {
+
+      // Load a different WebScene
+      const webscene = new WebScene({
+        portalItem: {
+          id: "47b70373fb2e4795b4bda7a8f0d208b1"  // Replace with your WebScene ID
+        }
+      });
+
+      const view = new SceneView({
+        container: "viewDiv",
+        map: webscene,
+        zoom: 3
+      });
+
+      // Add a Search widget to the view
+      const searchWidget = new Search({
+        view: view
+      });
+      view.ui.add(searchWidget, "top-right");
+
+      // Add a click event listener to open Google Maps Street View
+      view.on("click", function(evt) {
+        var vLat = evt.mapPoint.latitude;
+        var vLon = evt.mapPoint.longitude;
+        var heading = view.camera.heading;
+
+        console.log("Scene clicked at", evt.mapPoint);
+
+        // Construct the Google Maps Street View URL
+        var gUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${vLat},${vLon}&heading=${heading}`;
+        
+        // Open the URL in a new window
+        window.open(gUrl, "StreetView", "width=800,height=600");
+      });
+
+    });
+  </script>
+</body>
+</html>
